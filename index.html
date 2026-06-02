@@ -2,240 +2,344 @@
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>漢字練習アプリ</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>漢字練習</title>
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&display=swap');
 *{box-sizing:border-box;margin:0;padding:0;}
-body{font-family:'Noto Sans JP',sans-serif;background:#f5f4f0;min-height:100vh;display:flex;align-items:flex-start;justify-content:center;padding:1rem;}
-.app{width:100%;max-width:640px;padding:1rem 0;}
-.header-bar{display:flex;align-items:center;gap:12px;margin-bottom:1.2rem;}
-.header-bar h1{font-size:18px;font-weight:700;color:#1a1a1a;white-space:nowrap;}
-.prog-wrap{flex:1;background:#e0dfd9;border-radius:99px;height:6px;overflow:hidden;}
-.prog-bar{background:#534AB7;height:6px;border-radius:99px;transition:width 0.3s;}
-.counter{font-size:13px;color:#666;white-space:nowrap;}
-.tab-row{display:flex;gap:6px;margin-bottom:.8rem;border-bottom:1px solid #ddd;padding-bottom:.6rem;}
-.tab-btn{font-size:13px;padding:5px 14px;border-radius:99px;border:1px solid #ccc;background:#fff;color:#666;cursor:pointer;font-family:inherit;}
-.tab-btn.on{background:#534AB7;color:#fff;border-color:#534AB7;}
-.set-select{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:.8rem;}
-.set-btn{font-size:11px;padding:4px 9px;border-radius:99px;border:1px solid #ccc;background:#fff;color:#666;cursor:pointer;font-family:inherit;}
-.set-btn.on{background:#534AB7;color:#fff;border-color:#534AB7;}
-.q-card{background:#fff;border:1px solid #e0dfd9;border-radius:16px;padding:1.25rem 1.5rem 1rem;margin-bottom:1rem;box-shadow:0 2px 8px rgba(0,0,0,.04);}
-.sentence{font-size:20px;line-height:1.9;color:#1a1a1a;}
-.kana{font-size:20px;font-weight:700;color:#534AB7;border-bottom:2px solid #534AB7;}
-.sub-hint{font-size:12px;color:#999;margin-top:4px;}
-.canvas-row{display:flex;gap:10px;justify-content:center;margin:1rem 0;flex-wrap:wrap;}
-.cbox{display:flex;flex-direction:column;align-items:center;gap:4px;}
-.clabel{font-size:11px;color:#aaa;}
-canvas{border:1.5px dashed #bbb;border-radius:10px;background:#f9f8f5;cursor:crosshair;touch-action:none;display:block;}
-canvas.active{border:1.5px solid #534AB7;}
-.clr-btn{font-size:11px;color:#999;background:none;border:none;cursor:pointer;padding:2px 8px;font-family:inherit;}
-.actions{display:flex;gap:8px;justify-content:center;margin-top:.5rem;flex-wrap:wrap;}
-button{font-family:inherit;font-size:14px;padding:9px 20px;border-radius:10px;cursor:pointer;border:1px solid #ccc;background:#fff;color:#1a1a1a;transition:all .15s;touch-action:manipulation;}
-button:hover{background:#f0eff9;}
-.bp{background:#534AB7!important;color:#fff!important;border-color:#534AB7!important;}
-.bp:hover{background:#3C3489!important;}
-.br{background:#D85A30!important;color:#fff!important;border-color:#D85A30!important;}
-.br:hover{background:#993C1D!important;}
-.result-msg{text-align:center;font-size:15px;font-weight:500;padding:.4rem;min-height:26px;}
-.ok{color:#1D9E75;}.ng{color:#E24B4A;}
-.ans-box{width:110px;height:110px;border:1px solid #e0dfd9;border-radius:10px;background:#fff;display:flex;align-items:center;justify-content:center;font-size:46px;color:#1a1a1a;position:relative;}
-.ans-lbl{position:absolute;top:5px;left:7px;font-size:10px;color:#aaa;}
-.reading{display:inline-block;background:#f0eff9;border:1px solid #c9c6f0;border-radius:10px;font-size:12px;color:#534AB7;padding:2px 12px;margin-top:2px;}
-.score-card{background:#fff;border:1px solid #e0dfd9;border-radius:16px;padding:2rem;text-align:center;box-shadow:0 2px 8px rgba(0,0,0,.04);}
-.score-num{font-size:52px;font-weight:700;color:#534AB7;}
-.score-sub{font-size:14px;color:#666;margin-top:4px;}
-.missed-section{margin-top:1.5rem;text-align:left;}
-.missed-section h3{font-size:13px;font-weight:500;color:#666;margin-bottom:8px;}
-.missed-item{font-size:13px;padding:5px 0;border-bottom:1px solid #f0eff0;display:flex;justify-content:space-between;gap:8px;}
-.missed-ans{font-weight:500;color:#534AB7;white-space:nowrap;}
-.retry-banner{background:#fff5f2;border:1px solid #f0997b;border-radius:12px;padding:10px 14px;margin-bottom:.8rem;display:flex;align-items:center;gap:8px;}
-.retry-banner span{font-size:13px;color:#D85A30;flex:1;}
-.retry-badge{display:inline-block;background:#fff5f2;border:1px solid #f0997b;border-radius:99px;font-size:11px;color:#D85A30;padding:2px 10px;margin-left:6px;vertical-align:middle;}
-.mode-row{display:flex;gap:6px;margin-bottom:.8rem;}
-.mode-btn{font-size:12px;padding:4px 12px;border-radius:99px;border:1px solid #ccc;background:#fff;color:#666;cursor:pointer;font-family:inherit;}
-.mode-btn.on{background:#1D9E75;color:#fff;border-color:#1D9E75;}
-.label-sm{font-size:13px;color:#666;}
-.slider-row{display:flex;gap:8px;align-items:center;margin-bottom:1rem;}
-input[type=range]{flex:1;accent-color:#534AB7;}
-.score-actions{margin-top:1.5rem;display:flex;gap:8px;justify-content:center;flex-wrap:wrap;}
-.canvas-row{align-items:flex-start;}
-.candidates-wrap{display:flex;flex-wrap:wrap;gap:5px;justify-content:center;padding:4px 0;min-height:20px;max-width:200px;}
-.cand-btn{font-size:19px;padding:4px 8px;border-radius:8px;border:1.5px solid #ccc;background:#fff;cursor:pointer;font-family:inherit;color:#1a1a1a;min-width:38px;min-height:38px;line-height:1;}
-.cand-btn.sel{background:#534AB7;color:#fff;border-color:#534AB7;}
-.recognizing{font-size:11px;color:#aaa;padding:4px;}
+:root{
+  --p:#4F46E5;--p2:#7C3AED;--pl:#EEF2FF;
+  --bg:#F0EFFA;--card:#fff;--border:#E8E7F3;
+  --tx:#1E1B4B;--mu:#64748B;
+  --ok:#059669;--okb:#ECFDF5;
+  --ng:#DC2626;--ngb:#FEF2F2;
+  --wn:#D97706;--wnb:#FFFBEB;
+  --sh:0 2px 16px rgba(79,70,229,.08);
+  --sh2:0 8px 32px rgba(79,70,229,.14);
+}
+body{font-family:-apple-system,'Hiragino Sans','Yu Gothic',sans-serif;background:var(--bg);min-height:100vh;color:var(--tx);}
+button{font-family:inherit;touch-action:manipulation;cursor:pointer;-webkit-tap-highlight-color:transparent;}
+#app{max-width:620px;margin:0 auto;padding:0 16px 56px;}
+
+/* ── Home ── */
+.hd{display:flex;align-items:center;gap:16px;padding:28px 0 24px;}
+.logo{width:54px;height:54px;border-radius:16px;background:linear-gradient(135deg,var(--p),var(--p2));display:flex;align-items:center;justify-content:center;font-size:28px;font-weight:800;color:#fff;box-shadow:0 4px 18px rgba(79,70,229,.38);flex-shrink:0;}
+.h1{font-size:23px;font-weight:800;color:var(--tx);letter-spacing:-.4px;}
+.hsub{font-size:12px;color:var(--mu);margin-top:3px;}
+.slabel{font-size:11px;font-weight:700;letter-spacing:.12em;color:var(--mu);text-transform:uppercase;margin:20px 0 10px;}
+.gg{display:grid;grid-template-columns:repeat(auto-fill,minmax(100px,1fr));gap:10px;}
+.gc{background:var(--card);border:none;border-radius:14px;padding:16px 8px 13px;text-align:center;display:flex;flex-direction:column;align-items:center;gap:4px;box-shadow:var(--sh);transition:transform .12s,box-shadow .12s;}
+.gc:active{transform:scale(.94);box-shadow:none;}
+.gn{width:38px;height:38px;border-radius:11px;background:var(--pl);color:var(--p);font-size:18px;font-weight:800;display:flex;align-items:center;justify-content:center;margin-bottom:3px;}
+.gr{font-size:10px;color:var(--mu);}
+.gq{font-size:13px;font-weight:700;color:var(--tx);}
+.gc.ms .gn{background:var(--wnb);color:var(--wn);}
+.miss-badge{display:inline-flex;align-items:center;gap:6px;background:var(--wnb);border:1.5px solid #FCD34D;color:var(--wn);font-size:12px;font-weight:700;padding:5px 14px;border-radius:99px;margin-top:4px;}
+
+/* ── Quiz bar ── */
+.qb{display:flex;align-items:center;gap:8px;padding:14px 0 8px;}
+.bk{display:flex;align-items:center;gap:2px;font-size:13px;font-weight:700;color:var(--p);background:none;border:none;padding:6px 2px;white-space:nowrap;}
+.bk svg{width:18px;height:18px;flex-shrink:0;}
+.qt{flex:1;font-size:14px;font-weight:700;color:var(--tx);text-align:center;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.qc{font-size:14px;font-weight:700;color:var(--mu);white-space:nowrap;}
+.pb{height:5px;background:#DDD8F8;border-radius:99px;overflow:hidden;margin-bottom:18px;}
+.pf{height:100%;background:linear-gradient(90deg,var(--p),var(--p2));transition:width .35s;}
+
+/* ── Q card ── */
+.qcard{background:var(--card);border-radius:18px;padding:20px 18px 16px;box-shadow:var(--sh);margin-bottom:16px;}
+.qtype{font-size:11px;font-weight:700;letter-spacing:.1em;color:var(--mu);text-transform:uppercase;margin-bottom:10px;}
+.qs{font-size:20px;line-height:2.1;color:var(--tx);}
+.qk{font-weight:800;color:var(--p);border-bottom:2.5px solid var(--p);}
+.qhint{font-size:12px;color:var(--mu);margin-top:8px;}
+
+/* ── Canvas ── */
+.cvrow{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;padding:6px 0 12px;}
+.cbox{display:flex;flex-direction:column;align-items:center;gap:5px;}
+.clbl{font-size:11px;font-weight:600;color:var(--mu);}
+canvas{border:2px dashed #C7C4E8;border-radius:14px;background:#FDFCFF;display:block;touch-action:none;}
+canvas.on{border:2.5px solid var(--p);box-shadow:0 0 0 3px rgba(79,70,229,.13);}
+.cds{display:flex;flex-wrap:wrap;gap:5px;justify-content:center;max-width:220px;min-height:22px;padding:2px 0;}
+.cd{font-size:20px;padding:5px 8px;border-radius:9px;border:1.5px solid #D1D5DB;background:#fff;color:var(--tx);min-width:40px;min-height:40px;line-height:1;font-family:inherit;}
+.cd.sel{background:var(--p);color:#fff;border-color:var(--p);}
+.rg{font-size:11px;color:#9CA3AF;padding:4px;}
+.clr{font-size:11px;color:#9CA3AF;background:none;border:none;padding:2px 8px;font-family:inherit;}
+
+/* ── Actions ── */
+.acts{display:flex;gap:10px;justify-content:center;margin-top:4px;}
+.bmain{background:var(--p);color:#fff;font-size:15px;font-weight:700;border-radius:14px;padding:14px 36px;border:none;box-shadow:0 4px 16px rgba(79,70,229,.3);}
+.bmain:active{transform:scale(.97);}
+.bsub{background:#EEEDF8;color:var(--mu);font-size:14px;font-weight:600;border-radius:14px;padding:14px 20px;border:none;}
+.bsub:active{background:#E0DFF5;}
+
+/* ── Answer ── */
+.rbanner{border-radius:14px;padding:14px 16px;margin-bottom:16px;display:flex;align-items:flex-start;gap:12px;}
+.rbanner.ok{background:var(--okb);}
+.rbanner.ng{background:var(--ngb);}
+.rbanner.sk{background:var(--wnb);}
+.ricon{font-size:22px;flex-shrink:0;margin-top:1px;}
+.rmain{font-size:16px;font-weight:800;}
+.rmain.ok{color:var(--ok);}
+.rmain.ng{color:var(--ng);}
+.rmain.sk{color:var(--wn);}
+.rsub{font-size:12px;color:var(--mu);margin-top:3px;}
+.arow{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-bottom:10px;}
+.ab{border-radius:13px;border:2px solid var(--border);background:var(--card);display:flex;align-items:center;justify-content:center;position:relative;box-shadow:var(--sh);flex-shrink:0;}
+.ab.ok{border-color:var(--ok);background:var(--okb);}
+.ab.ng{border-color:var(--ng);background:var(--ngb);}
+.albl{position:absolute;top:5px;left:7px;font-size:9px;color:#9CA3AF;font-weight:600;}
+.amk{position:absolute;bottom:4px;right:6px;font-size:12px;font-weight:800;}
+.amk.ok{color:var(--ok);}
+.amk.ng{color:var(--ng);}
+.rpill{display:inline-flex;align-items:center;background:var(--pl);color:var(--p);font-size:13px;font-weight:700;padding:5px 16px;border-radius:99px;margin:4px 0 16px;}
+.bnext{background:var(--p);color:#fff;font-size:16px;font-weight:700;border-radius:14px;padding:15px;width:100%;border:none;box-shadow:0 4px 16px rgba(79,70,229,.3);}
+.bnext:active{transform:scale(.98);}
+
+/* ── Score ── */
+.sc{background:var(--card);border-radius:20px;padding:32px 20px 28px;text-align:center;box-shadow:var(--sh2);margin-top:20px;}
+.semoji{font-size:56px;margin-bottom:8px;}
+.snum{font-size:58px;font-weight:800;color:var(--p);line-height:1;}
+.sden{font-size:18px;font-weight:400;color:var(--mu);}
+.spill{display:inline-block;background:var(--pl);color:var(--p);font-size:14px;font-weight:700;padding:5px 18px;border-radius:99px;margin:8px 0;}
+.smsg{font-size:16px;font-weight:700;color:var(--tx);margin-top:4px;}
+.mhd{font-size:11px;font-weight:700;letter-spacing:.1em;color:var(--mu);text-transform:uppercase;margin:22px 0 8px;text-align:left;}
+.mi{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:9px 0;border-bottom:1px solid var(--border);}
+.mk{font-size:12px;color:var(--mu);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1;}
+.ma{font-size:13px;font-weight:700;color:var(--p);white-space:nowrap;}
+.sacts{display:flex;flex-direction:column;gap:10px;margin-top:22px;}
+.bwarn{background:var(--wnb);color:var(--wn);font-size:14px;font-weight:700;border-radius:12px;padding:13px;border:1.5px solid #FCD34D;}
+.bwarn:active{transform:scale(.98);}
+.bpri{background:var(--p);color:#fff;font-size:14px;font-weight:700;border-radius:12px;padding:13px;border:none;box-shadow:0 4px 14px rgba(79,70,229,.3);}
+.bpri:active{transform:scale(.98);}
+.bpl{background:var(--pl);color:var(--p);font-size:14px;font-weight:700;border-radius:12px;padding:13px;border:none;}
+.bpl:active{transform:scale(.98);}
 </style>
 </head>
 <body>
-<div class="app">
-  <div id="start-view">
-    <div class="tab-row">
-      <button class="tab-btn on" id="tab-kaki" onclick="switchSection('kaki')">書き取り（①〜⑨）</button>
-      <button class="tab-btn" id="tab-yomi" onclick="switchSection('yomi')">読み取り（①〜⑩）</button>
-    </div>
-    <div id="retry-banner" style="display:none" class="retry-banner">
-      <span id="retry-count-label"></span>
-      <button class="br" style="padding:6px 14px;font-size:13px" onclick="startRetry()">再練習する</button>
-    </div>
-    <div style="margin-bottom:.6rem">
-      <div class="label-sm" style="font-weight:500;margin-bottom:.4rem">セット選択</div>
-      <div class="set-select" id="set-select"></div>
-    </div>
-    <div class="mode-row">
-      <button class="mode-btn on" id="mode-rand" onclick="setMode('rand')">ランダム</button>
-      <button class="mode-btn" id="mode-seq" onclick="setMode('seq')">順番通り</button>
-    </div>
-    <div class="slider-row">
-      <label class="label-sm">出題数</label>
-      <input type="range" min="5" max="50" value="25" id="count-slider" oninput="document.getElementById('count-val').textContent=this.value">
-      <span id="count-val" style="font-size:13px;font-weight:500;min-width:24px">25</span>問
-    </div>
-    <button class="bp" onclick="startQuiz()" style="width:100%;padding:11px;font-size:15px">練習開始</button>
-  </div>
-
-  <div id="quiz-view" style="display:none">
-    <div class="header-bar">
-      <h1 id="q-title">書き取り<span id="retry-label"></span></h1>
-      <div class="prog-wrap"><div class="prog-bar" id="prog"></div></div>
-      <span class="counter" id="counter">1 / 25</span>
-    </div>
-    <div class="q-card">
-      <div class="sentence" id="sentence"></div>
-      <div class="sub-hint" id="sub-hint"></div>
-    </div>
-    <div class="canvas-row" id="canvas-row"></div>
-    <div class="actions" id="actions"></div>
-    <div class="result-msg" id="result-msg"></div>
-  </div>
-
-  <div id="score-view" style="display:none">
-    <div class="score-card">
-      <div class="score-num" id="final-score"></div>
-      <div class="score-sub" id="final-sub"></div>
-      <div class="missed-section" id="missed-section"></div>
-      <div class="score-actions" id="score-actions"></div>
-    </div>
-  </div>
-</div>
-
+<div id="app"></div>
 <script>
 const kakiQ={1:[{s:"正義と秩序に基づく国際平和を__する。",kana:"キキュウ",ans:"希求",read:"ききゅう"},{s:"日本語の__は何に起因しているのか。",kana:"コウハイ",ans:"荒廃",read:"こうはい"},{s:"雨の中をスポーツカーが__する。",kana:"シッソウ",ans:"疾走",read:"しっそう"},{s:"__を改良して作物の収量が大幅に増えた。",kana:"ドジョウ",ans:"土壌",read:"どじょう"},{s:"家の周辺を__な人物がうろついている。",kana:"フシン",ans:"不審",read:"ふしん"},{s:"時代遅れにならないために__に駆られる。",kana:"ショウソウ",ans:"焦燥",read:"しょうそう"},{s:"捕らわれた武将が地下牢に__される。",kana:"ユウヘイ",ans:"幽閉",read:"ゆうへい"},{s:"時の__や場所の変化によって条件が異なる。",kana:"スイイ",ans:"推移",read:"すいい"},{s:"__な立場で周囲の人を驚かせた。",kana:"キバツ",ans:"奇抜",read:"きばつ"},{s:"改修の目的や実現の可能性を__する。",kana:"カンアン",ans:"勘案",read:"かんあん"},{s:"この曲の__は難しくて歌いにくい。",kana:"センリツ",ans:"旋律",read:"せんりつ"},{s:"新制度について__官庁から指示が出た。",kana:"トウガイ",ans:"当該",read:"とうがい"},{s:"職務__をとがめられて反省した。",kana:"タイマン",ans:"怠慢",read:"たいまん"},{s:"社会への怒りが変革の活力へと__する。",kana:"ショウカ",ans:"昇華",read:"しょうか"},{s:"批評性の__は日本人全般に共通する。",kana:"ケツジョ",ans:"欠如",read:"けつじょ"},{s:"ゴールの__に選手の顔がほころんだ。",kana:"シュンカン",ans:"瞬間",read:"しゅんかん"},{s:"事件の__は感情的な行き違いである。",kana:"ホッタン",ans:"発端",read:"ほったん"},{s:"美しい音色にどこか__される。",kana:"ミワク",ans:"魅惑",read:"みわく"},{s:"悪を作り出す__を今度こそ根絶する。",kana:"オンショウ",ans:"温床",read:"おんしょう"},{s:"思いがけず__した好機をのがさない。",kana:"トウライ",ans:"到来",read:"とうらい"},{s:"山から見下ろすと__な礼拝堂が見える。",kana:"ソウゴン",ans:"荘厳",read:"そうごん"},{s:"国連の__によって一時休戦が実現した。",kana:"カイニュウ",ans:"介入",read:"かいにゅう"},{s:"農村の__化を食い止める方法を考える。",kana:"カソ",ans:"過疎",read:"かそ"}],2:[{s:"裁判の__員を引き受けることになった。",kana:"バイシン",ans:"陪審",read:"ばいしん"},{s:"独特の宇宙観を持つ思想に__する。",kana:"キョウメイ",ans:"共鳴",read:"きょうめい"},{s:"特別措置法は国会での審議を__した。",kana:"ケイゾク",ans:"継続",read:"けいぞく"},{s:"気のあった仲間と__な時間を過ごす。",kana:"アンタイ",ans:"安泰",read:"あんたい"},{s:"他人の思いなどを一切__しない態度だ。",kana:"コリョ",ans:"顧慮",read:"こりょ"},{s:"現代美術にとって__な作品が生まれた。",kana:"カッキテキ",ans:"画期的",read:"かっきてき"},{s:"汚濁を嫌って__さを追い求める。",kana:"ケッペキ",ans:"潔癖",read:"けっぺき"},{s:"目標に__するために努力を重ねる。",kana:"トウタツ",ans:"到達",read:"とうたつ"},{s:"母の形見の大事な家具を__する。",kana:"シュウゼン",ans:"修繕",read:"しゅうぜん"},{s:"恩師の__を受けて一人前の科学者になる。",kana:"クントウ",ans:"薫陶",read:"くんとう"},{s:"研究のために病院から菌を__している。",kana:"バイヨウ",ans:"培養",read:"ばいよう"},{s:"科学の最先端の__で研究を行う。",kana:"リョウイキ",ans:"領域",read:"りょういき"},{s:"__を凝らした作品を完成させた。",kana:"イショウ",ans:"意匠",read:"いしょう"},{s:"社長が営業の陣頭に立って__する。",kana:"シキ",ans:"指揮",read:"しき"}],3:[{s:"キフクに富む人生を送った革命家の伝記を読む。",kana:"キフク",ans:"起伏",read:"きふく"},{s:"申し入れを__した。",kana:"キョヒ",ans:"拒否",read:"きょひ"},{s:"昔のことはとるか__の彼方にある。",kana:"ボウキャク",ans:"忘却",read:"ぼうきゃく"},{s:"びっくり__して尻もちをついた。",kana:"ギョウテン",ans:"仰天",read:"ぎょうてん"},{s:"第一人者としての__が無惨に崩壊した。",kana:"ジフ",ans:"自負",read:"じふ"},{s:"話題が__にわたって、聞いていても飽きない。",kana:"タキ",ans:"多岐",read:"たき"},{s:"歯並びの__は子どもの時に始める。",kana:"キョウセイ",ans:"矯正",read:"きょうせい"},{s:"師は長い年月にわたり人々の__となった。",kana:"モハン",ans:"模範",read:"もはん"},{s:"サバクを緑化する計画が進行中である。",kana:"サバク",ans:"砂漠",read:"さばく"},{s:"目次や__を手がかりに調べる。",kana:"サクイン",ans:"索引",read:"さくいん"},{s:"いくつもの試練を乗り越えてきた__を練る。",kana:"センリャク",ans:"戦略",read:"せんりゃく"},{s:"世間の__に乗っていく。",kana:"フウチョウ",ans:"風潮",read:"ふうちょう"},{s:"異変を一番先に__するのは動物だ。",kana:"サッチ",ans:"察知",read:"さっち"},{s:"孔子は門人を教え__める言葉を遺している。",kana:"イマシ",ans:"戒め",read:"いましめ"}],4:[{s:"科学者は自然を__できると考えた。",kana:"セイギョ",ans:"制御",read:"せいぎょ"},{s:"__な価値観を振りかざす者を避ける。",kana:"ヘンキョウ",ans:"偏狭",read:"へんきょう"},{s:"私の母校は多くの人材を__してきた。",kana:"ハイシュツ",ans:"輩出",read:"はいしゅつ"},{s:"被害__をすぐに取り除くのは難しい。",kana:"モウソウ",ans:"妄想",read:"もうそう"},{s:"宇宙から地球へ無事__することができた。",kana:"キカン",ans:"帰還",read:"きかん"},{s:"村おこしの__として農業体験事業をする。",kana:"イッカン",ans:"一環",read:"いっかん"},{s:"人を__いて得た利益は身につかない。",kana:"アザム",ans:"欺く",read:"あざむく"},{s:"易しい問題から__に解いていく。",kana:"ジョジョ",ans:"徐々",read:"じょじょ"},{s:"ガンコに昔からのやり方を守っている。",kana:"ガンコ",ans:"頑固",read:"がんこ"},{s:"大自然の秋には__的になりがちだ。",kana:"カンショウ",ans:"感傷",read:"かんしょう"}],5:[{s:"畑を荒らす獣を__する仕掛けを作った。",kana:"ホカク",ans:"捕獲",read:"ほかく"},{s:"音の__が鮮やかな印象を与える。",kana:"ラレツ",ans:"羅列",read:"られつ"},{s:"気分のよいときは公園を__する。",kana:"サンサク",ans:"散策",read:"さんさく"},{s:"あらゆる手段を__して事に当たる。",kana:"ハキ",ans:"破棄",read:"はき"},{s:"日本各地に__する種々の理論を教える。",kana:"ヘンザイ",ans:"遍在",read:"へんざい"},{s:"意見が__して対立が深まった。",kana:"ショウトツ",ans:"衝突",read:"しょうとつ"},{s:"彼は終始__した態度を保っている。",kana:"イッカン",ans:"一貫",read:"いっかん"},{s:"岸壁にはさまざまな__が走っている。",kana:"キレツ",ans:"亀裂",read:"きれつ"},{s:"新しい国際機関の創設は世界の平和に__する。",kana:"キヨ",ans:"寄与",read:"きよ"},{s:"__を尽くして作品を仕上げる。",kana:"ギコウ",ans:"技巧",read:"ぎこう"},{s:"数々の__をなめた後に成功した。",kana:"シンボウ",ans:"辛抱",read:"しんぼう"}],6:[{s:"携帯電話会社が__の獲得競争を展開する。",kana:"コキャク",ans:"顧客",read:"こきゃく"},{s:"小学校の通路では__運転に取り組む。",kana:"ジョコウ",ans:"徐行",read:"じょこう"},{s:"__から学んだことを今後の人生に活かす。",kana:"ザセツ",ans:"挫折",read:"ざせつ"},{s:"深海魚には__な形態のものが多い。",kana:"トクイ",ans:"特異",read:"とくい"},{s:"大規模な投資の__効果があらわれる。",kana:"ハキュウ",ans:"波及",read:"はきゅう"},{s:"この地下鉄は五分__で発着している。",kana:"カンカク",ans:"間隔",read:"かんかく"},{s:"日頃の__を積んで技を磨く。",kana:"タンレン",ans:"鍛錬",read:"たんれん"},{s:"職権乱用のため__を受けてはならない。",kana:"セイサイ",ans:"制裁",read:"せいさい"},{s:"本人の気づかないうちに悪事に__してしまう。",kana:"カタン",ans:"加担",read:"かたん"},{s:"始めから終わりまで__一貫して取り組む。",kana:"シュビ",ans:"首尾",read:"しゅび"}],7:[{s:"__を乗り越えて事業を成功させた。",kana:"ショウガイ",ans:"障害",read:"しょうがい"},{s:"一度表明された見解が__されることは稀だ。",kana:"テッカイ",ans:"撤回",read:"てっかい"},{s:"商品の注文が__してさばき切れない。",kana:"サットウ",ans:"殺到",read:"さっとう"},{s:"法の__をくぐって悪事を働いてはいけない。",kana:"アミ",ans:"網",read:"あみ"},{s:"心の内に__な部分をかかえている。",kana:"クウキョ",ans:"空虚",read:"くうきょ"},{s:"子どもの探求心や__心を育てたい。",kana:"ボウケン",ans:"冒険",read:"ぼうけん"},{s:"友人をテニスサークルに誘って__する。",kana:"カンユウ",ans:"勧誘",read:"かんゆう"},{s:"日常生活は家庭や__の中で営まれる。",kana:"キンリン",ans:"近隣",read:"きんりん"},{s:"教科書に色刷りの図版が__された。",kana:"ソウニュウ",ans:"挿入",read:"そうにゅう"},{s:"__された祝賀会の場へと向かった。",kana:"ショウタイ",ans:"招待",read:"しょうたい"},{s:"親は子を__する義務を負っている。",kana:"フヨウ",ans:"扶養",read:"ふよう"}],8:[{s:"夜を徹して行方不明者の__が行われた。",kana:"ソウサク",ans:"捜索",read:"そうさく"},{s:"正式な手順を経て貴重な書物を__する。",kana:"エツラン",ans:"閲覧",read:"えつらん"},{s:"身分制の__を図ることで国家の隆盛をもたらす。",kana:"テッパイ",ans:"撤廃",read:"てっぱい"},{s:"クジラ類は大型の水棲の__類である。",kana:"ホニュウ",ans:"哺乳",read:"ほにゅう"},{s:"提案を__してしまった。",kana:"キャクカ",ans:"却下",read:"きゃっか"},{s:"気もすかしくて__な父親に育てられた。",kana:"ゲンカク",ans:"厳格",read:"げんかく"},{s:"年の節目を祝う__が今も残る。",kana:"シュウゾク",ans:"習俗",read:"しゅうぞく"},{s:"自然の__の前には人間は弱いものだ。",kana:"モウイ",ans:"猛威",read:"もうい"},{s:"時流に遅れないように情報を__する。",kana:"コウシン",ans:"更新",read:"こうしん"},{s:"「頭が__」とはボットウ的な表現だ。",kana:"ギャクセツ",ans:"逆説",read:"ぎゃくせつ"}],9:[{s:"コペルニクスは近代科学の__を築いた。",kana:"ソセキ",ans:"礎石",read:"そせき"},{s:"外国文学の享受には良質の__が必要だ。",kana:"ホンヤク",ans:"翻訳",read:"ほんやく"},{s:"出費がかさみ膨大な赤字が__した。",kana:"ルイセキ",ans:"累積",read:"るいせき"},{s:"敵の__を受けて兵士が逃げ惑った。",kana:"コウゲキ",ans:"攻撃",read:"こうげき"},{s:"人としての__を保ちながら生をまっとうする。",kana:"ソンゲン",ans:"尊厳",read:"そんげん"},{s:"野次を飛ばして会議の進行を__する。",kana:"ボウガイ",ans:"妨害",read:"ぼうがい"},{s:"逆境にも負けない__のある人が集まれる。",kana:"キガイ",ans:"気概",read:"きがい"},{s:"新しい国際機関の創設は世界の平和に__する。",kana:"キヨ",ans:"寄与",read:"きよ"},{s:"__を尽くして作品を仕上げる。",kana:"ギコウ",ans:"技巧",read:"ぎこう"},{s:"数々の__をなめた後に成功した。",kana:"シンボウ",ans:"辛抱",read:"しんぼう"}]};
 const yomiQ={1:[{s:"倫理が厳しく問われるのは必定である。",kana:"ひつじょう",ans:"必定",read:"ひつじょう"},{s:"彼女は軽く会釈をして部屋から出て行った。",kana:"えしゃく",ans:"会釈",read:"えしゃく"},{s:"敵対者からは軍国主義の化身と言われる。",kana:"けしん",ans:"化身",read:"けしん"},{s:"過去には私を鼓舞してくれた時代があった。",kana:"こぶ",ans:"鼓舞",read:"こぶ"},{s:"祖母はいつも大雑把に物事を考える。",kana:"おおざっぱ",ans:"大雑把",read:"おおざっぱ"},{s:"変革は漸進的に行われて成功した。",kana:"ぜんしん",ans:"漸進",read:"ぜんしん"},{s:"伯父のケンジツな人柄を慕って全国から人が集まる。",kana:"けんじつ",ans:"堅実",read:"けんじつ"},{s:"交通ジュウタイは年々ひどくなる傾向にある。",kana:"じゅうたい",ans:"渋滞",read:"じゅうたい"},{s:"他者への無関心がチームに警鐘を鳴らす。",kana:"けいしょう",ans:"警鐘",read:"けいしょう"},{s:"新キャプテンがチームを現代に牽引している。",kana:"けんいん",ans:"牽引",read:"けんいん"},{s:"音のインエイを聞き取る能力を持っている。",kana:"いんえい",ans:"陰影",read:"いんえい"},{s:"問題をわざと矮小化してとらえようとする。",kana:"わいしょう",ans:"矮小",read:"わいしょう"},{s:"最短の道を行くのが無理なら迂回もやむをえない。",kana:"うかい",ans:"迂回",read:"うかい"},{s:"警察官が容疑者に任意同行を求める。",kana:"にんい",ans:"任意",read:"にんい"},{s:"固唾を呑んで試合の成り行きを見守る。",kana:"かたず",ans:"固唾",read:"かたず"}],2:[{s:"五穀豊穣を願って神々に祈りを捧げる。",kana:"ほうじょう",ans:"豊穣",read:"ほうじょう"},{s:"警察犬の嗅覚は非常に役立っている。",kana:"きゅうかく",ans:"嗅覚",read:"きゅうかく"},{s:"上司に提出する企画書の体裁を整える。",kana:"ていさい",ans:"体裁",read:"ていさい"},{s:"大臣の不正を弾劾すべく立ち上がった。",kana:"だんがい",ans:"弾劾",read:"だんがい"},{s:"子孫は代々先祖の供養を欠かさず行う。",kana:"くよう",ans:"供養",read:"くよう"},{s:"神社や寺の境内は子どものよい遊び場だ。",kana:"けいだい",ans:"境内",read:"けいだい"},{s:"改革に賛同する者が漸次増加している。",kana:"ぜんじ",ans:"漸次",read:"ぜんじ"},{s:"趣味のために時間を割くのは苦にならない。",kana:"さく",ans:"割く",read:"さく"},{s:"現場での規律の弛緩を目の当たりにする。",kana:"しかん",ans:"弛緩",read:"しかん"},{s:"台風の日には所詮どんな行動も駄目になる。",kana:"しょせん",ans:"所詮",read:"しょせん"},{s:"何とも言えない寂寥感が忍び寄ってくる。",kana:"せきりょう",ans:"寂寥",read:"せきりょう"},{s:"人間は常に自己変革を怠ってはいけない。",kana:"おこたる",ans:"怠る",read:"おこたる"},{s:"平安朝の貴族は深く仏道に帰依した。",kana:"きえ",ans:"帰依",read:"きえ"}],3:[{s:"社会の趨勢を押しとどめることはできない。",kana:"すうせい",ans:"趨勢",read:"すうせい"},{s:"つまらない代物に高い金を払うことはない。",kana:"しろもの",ans:"代物",read:"しろもの"},{s:"頭の中の鋳型にはめて現象を解釈する。",kana:"いがた",ans:"鋳型",read:"いがた"},{s:"朝日に照らされ木の葉から朝露が滴り落ちる。",kana:"したたる",ans:"滴る",read:"したたる"},{s:"武道の修練を通じて人格の陶冶をめざす。",kana:"とうや",ans:"陶冶",read:"とうや"},{s:"第三者的立場から全体を俯瞰して削る。",kana:"ふかん",ans:"俯瞰",read:"ふかん"},{s:"刹那の快楽を追い求めるのは虚しいと知る。",kana:"せつな",ans:"刹那",read:"せつな"},{s:"都市緑化の必要性が喧伝されている。",kana:"けんでん",ans:"喧伝",read:"けんでん"},{s:"恩師の言葉を何度も反芻している。",kana:"はんすう",ans:"反芻",read:"はんすう"},{s:"今日でも階級社会の残滓が色濃く残っている。",kana:"ざんし",ans:"残滓",read:"ざんし"},{s:"方言の言葉の響きに心が強く惹かれた。",kana:"ひかれた",ans:"惹かれる",read:"ひかれる"},{s:"倦まず弛まず努力してついに成功した。",kana:"うまず",ans:"倦む",read:"うむ"}],4:[{s:"無事の知らせを聞いて安堵の胸をなでおろした。",kana:"あんど",ans:"安堵",read:"あんど"},{s:"新製品の販売競争は稀に見るほど激しかった。",kana:"まれ",ans:"稀",read:"まれ"},{s:"不祥事を起こした大臣がすぐに更迭された。",kana:"こうてつ",ans:"更迭",read:"こうてつ"},{s:"現場の判断に委ねる方が事はうまく運ぶ。",kana:"ゆだねる",ans:"委ねる",read:"ゆだねる"},{s:"閉塞感が指摘されている今日の日本社会。",kana:"へいそく",ans:"閉塞",read:"へいそく"},{s:"その場をごまかすほどの滑稽さに笑いが起きる。",kana:"こっけい",ans:"滑稽",read:"こっけい"},{s:"小説が売れても作家の生活に潤いが十分。",kana:"うるおい",ans:"潤い",read:"うるおい"},{s:"この絵は不朽の名作として人心をとらえてきた。",kana:"ふきゅう",ans:"不朽",read:"ふきゅう"},{s:"わざと人を貶めるような言い方をする。",kana:"おとしめる",ans:"貶める",read:"おとしめる"},{s:"外来語が日本語の語彙の中に流入してくる。",kana:"ごい",ans:"語彙",read:"ごい"},{s:"矛盾する思想が渾然として存在している。",kana:"こんぜん",ans:"渾然",read:"こんぜん"},{s:"大空に屹立する富士山を遠くから仰ぎ見る。",kana:"きつりつ",ans:"屹立",read:"きつりつ"}],5:[{s:"全世界の人々がコウキュウ的な平和を願う。",kana:"こうきゅう",ans:"恒久",read:"こうきゅう"},{s:"細かいちりが部屋の中にフユウしている。",kana:"ふゆう",ans:"浮遊",read:"ふゆう"},{s:"水温が上がると物質の溶解度は大きくなる。",kana:"ようかい",ans:"溶解",read:"ようかい"},{s:"エイリな思考力は無関心ではない。",kana:"えいり",ans:"鋭利",read:"えいり"},{s:"無関心は、ある意味レイコクな行為である。",kana:"れいこく",ans:"冷酷",read:"れいこく"},{s:"蔵にしまってある骨董品をカンテイする。",kana:"かんてい",ans:"鑑定",read:"かんてい"}],6:[{s:"新鮮な食材のジュヨウが急速に増えている。",kana:"じゅよう",ans:"需要",read:"じゅよう"},{s:"登場人物の描写が詳しく描かれた小説。",kana:"びょうしゃ",ans:"描写",read:"びょうしゃ"},{s:"役人が民衆にイアツ的な態度で臨んだ。",kana:"いあつ",ans:"威圧",read:"いあつ"},{s:"仕事の合間にキュウソク室でとくつろぐ。",kana:"きゅうけい",ans:"休憩",read:"きゅうけい"},{s:"家から学校までかなりのキョリがある。",kana:"きょり",ans:"距離",read:"きょり"},{s:"自転車の並走は道路交通法にテイショクする。",kana:"ていしょく",ans:"抵触",read:"ていしょく"},{s:"業務テイケイによって仕事の存続を図る。",kana:"ていけい",ans:"提携",read:"ていけい"},{s:"失敗してもジュウゼンに善い行いをすること。",kana:"じゅうぜん",ans:"十全",read:"じゅうぜん"}],7:[{s:"運命の自由を奪うケンエツに反対する。",kana:"けんえつ",ans:"検閲",read:"けんえつ"},{s:"売り上げの落ちた幼稚な手段を講じる。",kana:"ようち",ans:"幼稚",read:"ようち"},{s:"手術をして病気をすべてテキシュツする。",kana:"てきしゅつ",ans:"摘出",read:"てきしゅつ"},{s:"絶滅危惧種の鳥の保護を訴える運動を展開する。",kana:"ぜつめつ",ans:"絶滅",read:"ぜつめつ"},{s:"傷口の血液は赤黒くギョウコして止まっていた。",kana:"ぎょうこ",ans:"凝固",read:"ぎょうこ"},{s:"お金をカセぐためだけに仕事をするのではない。",kana:"かせぐ",ans:"稼ぐ",read:"かせぐ"},{s:"余りにも去った青春にはミレンものない。",kana:"みれん",ans:"未練",read:"みれん"},{s:"一歩的なシンサの審査基準を設けることにする。",kana:"しんさ",ans:"審査",read:"しんさ"}],8:[{s:"叔父はトクシュな非日常的体験を語った。",kana:"とくしゅ",ans:"特殊",read:"とくしゅ"},{s:"反論を受け入れないハイタ的な社会。",kana:"はいた",ans:"排他",read:"はいた"},{s:"知識はかり振り回すのはキョウリョウである。",kana:"きょうりょう",ans:"狭量",read:"きょうりょう"},{s:"幼い子どもがムジャキに遊んでいる。",kana:"むじゃき",ans:"無邪気",read:"むじゃき"},{s:"官房長官が政府の見解をカンケツに説明する。",kana:"かんけつ",ans:"簡潔",read:"かんけつ"},{s:"仏教ハッショウの地はガンジス川流域とされる。",kana:"はっしょう",ans:"発祥",read:"はっしょう"},{s:"大々的に物産展をカイサイすることが決定した。",kana:"かいさい",ans:"開催",read:"かいさい"},{s:"美術館でギリシャ時代のチョウコクを鑑賞する。",kana:"ちょうこく",ans:"彫刻",read:"ちょうこく"},{s:"計画全体のコウソウを述べてください。",kana:"こうそう",ans:"構想",read:"こうそう"}],9:[{s:"飲み水の確保がセツジツな問題となっている。",kana:"せつじつ",ans:"切実",read:"せつじつ"},{s:"工場のカドウ率は低い水準のままである。",kana:"かどう",ans:"稼働",read:"かどう"},{s:"物価がコウトウして国民の生活が苦しくなった。",kana:"こうとう",ans:"高騰",read:"こうとう"},{s:"永年会社に貢献してきた友人を称える。",kana:"たたえる",ans:"称える",read:"たたえる"},{s:"地震の大きさを示すシヒョウには二種類ある。",kana:"しひょう",ans:"指標",read:"しひょう"},{s:"わざとチョウハツするような言い方をする。",kana:"ちょうはつ",ans:"挑発",read:"ちょうはつ"},{s:"何もすることがなくヒマを持て余している。",kana:"ひま",ans:"暇",read:"ひま"}],10:[{s:"本件にカノウした人物は複数存在する。",kana:"かんよ",ans:"関与",read:"かんよ"},{s:"深刻味を帯びた暗い表情が印象的であった。",kana:"おびる",ans:"帯びる",read:"おびる"},{s:"水は長い年月の間に岩をも浸食する。",kana:"しんしょく",ans:"浸食",read:"しんしょく"},{s:"街頭演説を聞いて地方色の豊かさに感銘を受けた。",kana:"かんめい",ans:"感銘",read:"かんめい"},{s:"民謡には地方色の豊かなノウコウな個性がある。",kana:"のうこう",ans:"濃厚",read:"のうこう"},{s:"新しい武器のイリョクを見せつけられた。",kana:"いりょく",ans:"威力",read:"いりょく"},{s:"株価暴落によりキョウコウが起きた。",kana:"きょうこう",ans:"恐慌",read:"きょうこう"},{s:"都市近郊に娯楽のための施設を設置する。",kana:"しせつ",ans:"施設",read:"しせつ"},{s:"十九世紀にロマン派は芸術のシジョウ主義を掲げた。",kana:"しじょう",ans:"至上",read:"しじょう"}]};
 
-let section='kaki',selectedSets=new Set([1]),mode='rand';
-let order=[],idx=0,score=0,missed=[],allMissed=[];
-let canvases=[],drawing=[],lastPos=[];
-let strokesData=[],selectedChars=[],candidatesData=[],recognizeTimers=[];
-let revealed=false,isRetry=false,renderGen=0;
+// ── State ──────────────────────────────────────────
+const S={
+  screen:'home',
+  qs:[],label:'',idx:0,score:0,missed:[],allMissed:[],
+  rev:false,isRetry:false,lastRes:null,
+  selChars:[],candData:[],strokes:[],timers:[],gen:0,drawing:[],lpos:[]
+};
 
-function switchSection(s){section=s;selectedSets=new Set([1]);document.getElementById('tab-kaki').className='tab-btn'+(s==='kaki'?' on':'');document.getElementById('tab-yomi').className='tab-btn'+(s==='yomi'?' on':'');buildSetButtons();}
-function buildSetButtons(){const Q=section==='kaki'?kakiQ:yomiQ;const maxN=Object.keys(Q).length;const lk=['①','②','③','④','⑤','⑥','⑦','⑧','⑨'];const ly=['①','②','③','④','⑤','⑥','⑦','⑧','⑨','⑩'];const labels=section==='kaki'?lk:ly;const prefix=section==='kaki'?'書き取り':'読み取り';const ss=document.getElementById('set-select');ss.innerHTML='';const ab=document.createElement('button');ab.className='set-btn'+(selectedSets.size===maxN?' on':'');ab.textContent='全セット';ab.onclick=()=>{selectedSets.size===maxN?selectedSets.clear():[...Array(maxN)].forEach((_,i)=>selectedSets.add(i+1));updateSetBtns(maxN);};ss.appendChild(ab);for(let i=1;i<=maxN;i++){const b=document.createElement('button');b.className='set-btn'+(selectedSets.has(i)?' on':'');b.textContent=prefix+labels[i-1];const n=i;b.onclick=()=>{selectedSets.has(n)?selectedSets.delete(n):selectedSets.add(n);updateSetBtns(maxN);};ss.appendChild(b);}updateRetryBanner();}
-function updateSetBtns(maxN){const btns=document.querySelectorAll('#set-select .set-btn');btns[0].className='set-btn'+(selectedSets.size===maxN?' on':'');for(let i=1;i<=maxN;i++)btns[i].className='set-btn'+(selectedSets.has(i)?' on':'');}
-function updateRetryBanner(){const rb=document.getElementById('retry-banner');const rel=allMissed.filter(q=>q.sec===section);if(rel.length>0){rb.style.display='flex';document.getElementById('retry-count-label').textContent='前回間違えた問題が '+rel.length+' 問あります';}else{rb.style.display='none';}}
-function setMode(m){mode=m;document.getElementById('mode-rand').className='mode-btn'+(m==='rand'?' on':'');document.getElementById('mode-seq').className='mode-btn'+(m==='seq'?' on':'');}
-function goStart(){document.getElementById('start-view').style.display='';document.getElementById('quiz-view').style.display='none';document.getElementById('score-view').style.display='none';updateRetryBanner();}
-function startRetry(){const rel=allMissed.filter(q=>q.sec===section);if(!rel.length)return;order=rel.slice().sort(()=>Math.random()-.5);isRetry=true;idx=0;score=0;missed=[];document.getElementById('start-view').style.display='none';document.getElementById('quiz-view').style.display='';document.getElementById('score-view').style.display='none';render();}
-function startQuiz(){if(!selectedSets.size){alert('セットを選んでください');return;}const Q=section==='kaki'?kakiQ:yomiQ;let pool=[];[...selectedSets].sort((a,b)=>a-b).forEach(n=>{pool=pool.concat((Q[n]||[]).map(q=>({...q,set:n,sec:section})));});const count=Math.min(parseInt(document.getElementById('count-slider').value),pool.length);order=mode==='rand'?pool.slice().sort(()=>Math.random()-.5).slice(0,count):pool.slice(0,count);isRetry=false;idx=0;score=0;missed=[];document.getElementById('start-view').style.display='none';document.getElementById('quiz-view').style.display='';document.getElementById('score-view').style.display='none';render();}
+function e(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+
+function pool(t){
+  const Q=t==='kaki'?kakiQ:yomiQ;
+  return Object.values(Q).flatMap((qs,i)=>qs.map(q=>({...q,sec:t,set:i+1})));
+}
+function grps(t){const p=pool(t),g=[];for(let i=0;i<p.length;i+=25)g.push(p.slice(i,i+25));return g;}
+
+// ── Master render ───────────────────────────────────
 function render(){
-  revealed=false;
-  renderGen++;
-  recognizeTimers.forEach(t=>clearTimeout(t));
-  recognizeTimers=[];strokesData=[];selectedChars=[];candidatesData=[];
-  const q=order[idx];const total=order.length;
-  document.getElementById('prog').style.width=((idx/total)*100)+'%';
-  document.getElementById('counter').textContent=(idx+1)+' / '+total;
-  const lk=['①','②','③','④','⑤','⑥','⑦','⑧','⑨'];const ly=['①','②','③','④','⑤','⑥','⑦','⑧','⑨','⑩'];
-  const labels=q.sec==='kaki'?lk:ly;const prefix=q.sec==='kaki'?'書き取り':'読み取り';
-  document.getElementById('retry-label').innerHTML=isRetry?'<span class="retry-badge">再練習</span>':'';
-  document.getElementById('q-title').textContent=prefix+(labels[q.set-1]||'');
-  document.getElementById('sub-hint').textContent=q.sec==='kaki'?'カタカナを漢字に直してください':'漢字の読みをひらがなで書いてください';
-  const parts=q.s.split('__');
-  document.getElementById('sentence').innerHTML=(parts[0]||'')+'<span class="kana">'+q.kana+'</span>'+(parts[1]||'');
-  const row=document.getElementById('canvas-row');row.innerHTML='';canvases=[];drawing=[];lastPos=[];
-  const n=q.ans.length;const cvSize=n<=3?130:n<=5?110:90;
-  for(let i=0;i<n;i++){
-    strokesData.push([]);selectedChars.push(null);candidatesData.push([]);recognizeTimers.push(null);
-    const box=document.createElement('div');box.className='cbox';
-    const lbl=document.createElement('div');lbl.className='clabel';lbl.textContent=(i+1)+'文字目';
-    const cv=document.createElement('canvas');cv.width=cvSize;cv.height=cvSize;cv.className=i===0?'active':'';
-    setupCanvas(cv,i);
-    const cw=document.createElement('div');cw.className='candidates-wrap';cw.id='candidates-'+i;
-    const clr=document.createElement('button');clr.className='clr-btn';clr.textContent='消す';
-    const ci=i;clr.onclick=()=>clearCv(ci);
-    box.append(lbl,cv,cw,clr);row.appendChild(box);canvases.push(cv);drawing.push(false);lastPos.push({x:0,y:0});
-  }
-  const act=document.getElementById('actions');act.innerHTML='';
-  const ck=document.createElement('button');ck.className='bp';ck.textContent='答え合わせ';ck.onclick=()=>showAns(false);act.appendChild(ck);
-  const sk=document.createElement('button');sk.textContent='わからない';sk.onclick=()=>showAns(true);act.appendChild(sk);
-  document.getElementById('result-msg').textContent='';
+  S.gen++;
+  S.timers.forEach(t=>clearTimeout(t));
+  S.timers=[];
+  const app=document.getElementById('app');
+  if(S.screen==='home') app.innerHTML=homeHTML();
+  else if(S.screen==='quiz'){app.innerHTML=quizHTML();if(!S.rev)setupCV();}
+  else app.innerHTML=scoreHTML();
   window.scrollTo(0,0);
 }
-function setupCanvas(cv,i){
+
+// ── Home HTML ───────────────────────────────────────
+function homeHTML(){
+  const kg=grps('kaki'),yg=grps('yomi');
+  const mk=S.allMissed.filter(q=>q.sec==='kaki'),my=S.allMissed.filter(q=>q.sec==='yomi');
+  const gc=(qs,i,t)=>`<button class="gc" onclick="stG(${i},'${t}')"><div class="gn">${i+1}</div><div class="gr">${i*25+1}〜${i*25+qs.length}</div><div class="gq">${qs.length}問</div></button>`;
+  return `<div class="hd"><div class="logo">漢</div><div><div class="h1">漢字練習</div><div class="hsub">書き取り・読み取りトレーニング</div></div></div>
+  <div class="slabel">書き取り</div><div class="gg">${kg.map((q,i)=>gc(q,i,'kaki')).join('')}</div>
+  <div class="slabel">読み取り</div><div class="gg">${yg.map((q,i)=>gc(q,i,'yomi')).join('')}</div>
+  ${(mk.length||my.length)?`<div class="slabel">間違えた問題</div><div class="gg">
+    ${mk.length?`<button class="gc ms" onclick="stR('kaki')"><div class="gn">書</div><div class="gr">書き取り</div><div class="gq">${mk.length}問</div></button>`:''}
+    ${my.length?`<button class="gc ms" onclick="stR('yomi')"><div class="gn">読</div><div class="gr">読み取り</div><div class="gq">${my.length}問</div></button>`:''}
+  </div>`:''}`;
+}
+
+// ── Quiz HTML ───────────────────────────────────────
+function quizHTML(){
+  const q=S.qs[S.idx];
+  if(!q) return `<p style="padding:40px;text-align:center">エラーが発生しました。<br><br><button class="bpri" style="margin-top:12px" onclick="goHome()">ホームに戻る</button></p>`;
+  const tot=S.qs.length,pct=(S.idx/tot*100).toFixed(1);
+  const bar=`<div class="qb">
+    <button class="bk" onclick="goHome()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>ホーム</button>
+    <div class="qt">${e(S.label)}</div>
+    <div class="qc">${S.idx+1}/${tot}</div>
+  </div>
+  <div class="pb"><div class="pf" style="width:${pct}%"></div></div>`;
+
+  if(!S.rev){
+    const pts=q.s.split('__');
+    const n=q.ans.length;
+    const w=Math.min((typeof window!=='undefined'?window.innerWidth:390),620);
+    const cvS=Math.min(190,Math.floor((w-32-(n-1)*12)/n));
+    return `${bar}
+    <div class="qcard">
+      <div class="qtype">${e(q.sec==='kaki'?'書き取り':'読み取り')}</div>
+      <div class="qs">${e(pts[0]||'')}<span class="qk">${e(q.kana)}</span>${e(pts[1]||'')}</div>
+      <div class="qhint">${q.sec==='kaki'?'カタカナを漢字に直してください':'漢字の読みをひらがなで書いてください'}</div>
+    </div>
+    <div class="cvrow">${[...Array(n)].map((_,i)=>`<div class="cbox"><div class="clbl">${i+1}文字目</div><canvas id="cv${i}" width="${cvS}" height="${cvS}"></canvas><div class="cds" id="cds${i}"></div><button class="clr" onclick="clrCV(${i})">消す</button></div>`).join('')}</div>
+    <div class="acts">
+      <button class="bmain" onclick="doCheck()">答え合わせ</button>
+      <button class="bsub" onclick="doSkip()">わからない</button>
+    </div>`;
+  }
+
+  // Answer view
+  const n=q.ans.length;
+  const bsz=n<=2?120:n<=4?100:84,bfs=n<=2?50:n<=4?40:32;
+  const r=S.lastRes;
+  let bc='',icon='',main='',sub='';
+  if(r.skip){bc='sk';icon='💡';main='答え';sub=`${q.ans}（${q.read}）`;}
+  else if(r.auto){
+    if(r.ok){bc='ok';icon='✅';main='正解！';sub=`${q.ans}（${q.read}）`;}
+    else{bc='ng';icon='❌';main='不正解';sub=`正解：${q.ans}（${q.read}）`;}
+  }else{bc='ok';icon='✅';main='正解';sub=`${q.ans}（${q.read}）`;}
+
+  const boxes=[...Array(n)].map((_,i)=>{
+    let cls='',mk='';
+    if(r.auto&&q.sec==='kaki'){const ok=S.selChars[i]===q.ans[i];cls=ok?'ok':'ng';mk=`<span class="amk ${cls}">${ok?'○':'✗'}</span>`;}
+    return `<div class="ab ${cls}" style="width:${bsz}px;height:${bsz}px;font-size:${bfs}px;"><span class="albl">${i+1}文字目</span>${e(q.ans[i])}${mk}</div>`;
+  }).join('');
+
+  return `${bar}
+  <div class="rbanner ${bc}"><span class="ricon">${icon}</span><div><div class="rmain ${bc}">${e(main)}</div><div class="rsub">${e(sub)}</div></div></div>
+  <div class="arow">${boxes}</div>
+  <div style="text-align:center"><span class="rpill">読み：${e(q.read)}</span></div>
+  <button class="bnext" onclick="doNext()">${S.idx+1<tot?'次の問題 →':'結果を見る'}</button>`;
+}
+
+// ── Score HTML ──────────────────────────────────────
+function scoreHTML(){
+  const tot=S.qs.length,pct=Math.round(S.score/tot*100);
+  const em=pct>=90?'🏆':pct>=70?'⭐':pct>=50?'📚':'💪';
+  const msg=pct>=90?'素晴らしい！':pct>=70?'よくできました！':pct>=50?'惜しい！':' 引き続き練習しよう！';
+  return `<div class="sc">
+    <div class="semoji">${em}</div>
+    <div class="snum">${S.score}<span class="sden"> / ${tot}</span></div>
+    <div class="spill">正解率 ${pct}%</div>
+    <div class="smsg">${msg}</div>
+    ${S.missed.length>0?`<div class="mhd">間違えた問題（${S.missed.length}問）</div>${S.missed.map(q=>`<div class="mi"><span class="mk">${e(q.kana)}</span><span class="ma">${e(q.ans)}（${e(q.read)}）</span></div>`).join('')}`:''}
+    <div class="sacts">
+      ${S.missed.length>0?`<button class="bwarn" onclick="doRetryMissed()">間違えた ${S.missed.length}問を再練習する</button>`:''}
+      <button class="bpl" onclick="stG_again()">もう一度</button>
+      <button class="bpri" onclick="goHome()">ホームに戻る</button>
+    </div>
+  </div>`;
+}
+
+// ── Canvas setup ────────────────────────────────────
+function setupCV(){
+  const q=S.qs[S.idx],n=q.ans.length;
+  S.strokes=Array.from({length:n},()=>[]);
+  S.selChars=Array(n).fill(null);
+  S.candData=Array.from({length:n},()=>[]);
+  S.timers=Array(n).fill(null);
+  S.drawing=Array(n).fill(false);
+  S.lpos=Array.from({length:n},()=>({x:0,y:0}));
+  const g=S.gen;
+  for(let i=0;i<n;i++){const cv=document.getElementById(`cv${i}`);if(cv)initCV(cv,i,g);}
+}
+
+function initCV(cv,i,g){
   const ctx=cv.getContext('2d');ctx.lineWidth=3;ctx.lineCap='round';ctx.lineJoin='round';
-  let t0=0,cur=null;
-  function pos(e){const r=cv.getBoundingClientRect(),s=e.touches?e.touches[0]:e;return{x:(s.clientX-r.left)*(cv.width/r.width),y:(s.clientY-r.top)*(cv.height/r.height)};}
-  function startDraw(e){e.preventDefault();drawing[i]=true;t0=Date.now();cur={xs:[],ys:[],ts:[]};const p=pos(e);lastPos[i]=p;cur.xs.push(p.x);cur.ys.push(p.y);cur.ts.push(0);ctx.fillStyle='#1a1a1a';ctx.beginPath();ctx.arc(p.x,p.y,1.5,0,Math.PI*2);ctx.fill();}
-  function moveDraw(e){if(!drawing[i]||!cur)return;e.preventDefault();const p=pos(e);ctx.strokeStyle='#1a1a1a';ctx.beginPath();ctx.moveTo(lastPos[i].x,lastPos[i].y);ctx.lineTo(p.x,p.y);ctx.stroke();lastPos[i]=p;cur.xs.push(p.x);cur.ys.push(p.y);cur.ts.push(Date.now()-t0);}
-  function endDraw(){if(!drawing[i])return;drawing[i]=false;if(cur&&cur.xs.length>1)strokesData[i].push(cur);cur=null;clearTimeout(recognizeTimers[i]);const g=renderGen;recognizeTimers[i]=setTimeout(()=>doRecognize(i,cv.width,cv.height,g),800);}
-  cv.addEventListener('mousedown',startDraw);cv.addEventListener('mousemove',moveDraw);cv.addEventListener('mouseup',endDraw);cv.addEventListener('mouseleave',endDraw);
-  cv.addEventListener('touchstart',startDraw,{passive:false});cv.addEventListener('touchmove',moveDraw,{passive:false});cv.addEventListener('touchend',endDraw);
+  let cur=null,t0=0;
+  const pt=e=>{const r=cv.getBoundingClientRect(),s=e.touches?e.touches[0]:e;return{x:(s.clientX-r.left)*(cv.width/r.width),y:(s.clientY-r.top)*(cv.height/r.height)};};
+  const sd=e=>{e.preventDefault();if(g!==S.gen)return;S.drawing[i]=true;t0=Date.now();cur={xs:[],ys:[],ts:[]};const p=pt(e);S.lpos[i]=p;cur.xs.push(p.x);cur.ys.push(p.y);cur.ts.push(0);ctx.fillStyle='#1a1a1a';ctx.beginPath();ctx.arc(p.x,p.y,1.5,0,Math.PI*2);ctx.fill();cv.classList.add('on');};
+  const md=e=>{if(!S.drawing[i]||!cur||g!==S.gen)return;e.preventDefault();const p=pt(e);ctx.strokeStyle='#1a1a1a';ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(S.lpos[i].x,S.lpos[i].y);ctx.lineTo(p.x,p.y);ctx.stroke();S.lpos[i]=p;cur.xs.push(p.x);cur.ys.push(p.y);cur.ts.push(Date.now()-t0);};
+  const eu=()=>{if(!S.drawing[i])return;S.drawing[i]=false;if(cur&&cur.xs.length>1)S.strokes[i].push(cur);cur=null;clearTimeout(S.timers[i]);S.timers[i]=setTimeout(()=>recog(i,cv.width,cv.height,g),800);};
+  cv.addEventListener('mousedown',sd);cv.addEventListener('mousemove',md);cv.addEventListener('mouseup',eu);cv.addEventListener('mouseleave',eu);
+  cv.addEventListener('touchstart',sd,{passive:false});cv.addEventListener('touchmove',md,{passive:false});cv.addEventListener('touchend',eu);
 }
-function clearCv(i){
-  const ctx=canvases[i].getContext('2d');ctx.clearRect(0,0,canvases[i].width,canvases[i].height);
-  strokesData[i]=[];selectedChars[i]=null;candidatesData[i]=[];clearTimeout(recognizeTimers[i]);
-  const el=document.getElementById('candidates-'+i);if(el)el.innerHTML='';
-}
-async function doRecognize(i,w,h,g){
-  if(g!==renderGen)return;
-  if(!strokesData[i]||strokesData[i].length===0)return;
-  const el=document.getElementById('candidates-'+i);if(!el)return;
-  el.innerHTML='<span class="recognizing">認識中...</span>';
+
+async function recog(i,w,h,g){
+  if(g!==S.gen||!S.strokes[i]||!S.strokes[i].length)return;
+  const el=document.getElementById(`cds${i}`);if(!el)return;
+  el.innerHTML='<span class="rg">認識中...</span>';
   try{
-    const ink=strokesData[i].map(s=>[s.xs,s.ys,s.ts]);
+    const ink=S.strokes[i].map(s=>[s.xs,s.ys,s.ts]);
     const res=await fetch('https://inputtools.google.com/request?ime=handwriting&app=translate&dbg=1&cs=1&oe=UTF-8',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({options:'enable_pre_space',requests:[{writing_guide:{writing_area_width:w,writing_area_height:h},ink,language:'ja'}]})});
-    if(g!==renderGen)return;
+    if(g!==S.gen)return;
     const data=await res.json();
     const cands=(data[1]?.[0]?.[1]||[]).slice(0,8).filter(c=>c.trim());
-    if(g===renderGen)showCandidates(i,cands);
-  }catch(e){if(g===renderGen&&el)el.innerHTML='';}
+    if(g===S.gen)showCands(i,cands);
+  }catch(err){if(g===S.gen&&el)el.innerHTML='';}
 }
-function showCandidates(i,cands){
-  candidatesData[i]=cands;const el=document.getElementById('candidates-'+i);if(!el)return;el.innerHTML='';
-  cands.forEach(ch=>{const b=document.createElement('button');b.className='cand-btn'+(selectedChars[i]===ch?' sel':'');b.textContent=ch;b.onclick=()=>selectCandidate(i,ch);el.appendChild(b);});
-}
-function selectCandidate(i,ch){selectedChars[i]=ch;showCandidates(i,candidatesData[i]||[]);}
-function showAns(skip){
-  if(revealed)return;revealed=true;
-  recognizeTimers.forEach(t=>clearTimeout(t));
-  const q=order[idx];
-  const allSel=selectedChars.length>0&&selectedChars.every(c=>c!==null);
-  let correct=false,auto=false;
-  if(skip){missed.push(q);if(!allMissed.find(m=>m.ans===q.ans&&m.sec===q.sec))allMissed.push(q);}
-  else if(allSel){
-    auto=true;
-    correct=q.sec==='kaki'?selectedChars.every((c,i)=>c===q.ans[i]):selectedChars.join('')===q.read;
-    if(correct){score++;const i2=allMissed.findIndex(m=>m.ans===q.ans&&m.sec===q.sec);if(i2!==-1)allMissed.splice(i2,1);}
-    else{missed.push(q);if(!allMissed.find(m=>m.ans===q.ans&&m.sec===q.sec))allMissed.push(q);}
-  }else{correct=true;score++;const i2=allMissed.findIndex(m=>m.ans===q.ans&&m.sec===q.sec);if(i2!==-1)allMissed.splice(i2,1);}
-  const row=document.getElementById('canvas-row');row.innerHTML='';
-  const bsz=q.ans.length<=3?110:85,bfs=q.ans.length<=3?46:34;
-  for(let i=0;i<q.ans.length;i++){
-    const box=document.createElement('div');box.className='ans-box';box.style.width=box.style.height=bsz+'px';box.style.fontSize=bfs+'px';
-    if(auto&&q.sec==='kaki'){const ok=selectedChars[i]===q.ans[i];box.style.borderColor=ok?'#1D9E75':'#E24B4A';const mk=document.createElement('span');mk.style.cssText='position:absolute;bottom:4px;right:6px;font-size:13px;font-weight:700;color:'+(ok?'#1D9E75':'#E24B4A');mk.textContent=ok?'○':'✗';box.appendChild(mk);}
-    const lbl=document.createElement('div');lbl.className='ans-lbl';lbl.textContent=(i+1)+'文字目';
-    box.append(lbl,document.createTextNode(q.ans[i]));row.appendChild(box);
-  }
-  const rb=document.createElement('div');rb.className='reading';rb.textContent='読み：'+q.read;row.appendChild(rb);
-  const msg=document.getElementById('result-msg');
-  if(skip){msg.textContent='答え：'+q.ans+'（'+q.read+'）';msg.className='result-msg ng';}
-  else if(auto){msg.textContent=correct?'正解！ '+q.ans+'（'+q.read+'）':'不正解 → 正解：'+q.ans+'（'+q.read+'）';msg.className='result-msg '+(correct?'ok':'ng');}
-  else{msg.textContent='正解：'+q.ans+'（'+q.read+'）';msg.className='result-msg ok';}
-  const act=document.getElementById('actions');act.innerHTML='';
-  const nx=document.createElement('button');nx.className='bp';nx.textContent=idx+1<order.length?'次の問題 →':'結果を見る';const myGen=renderGen;nx.addEventListener('click',()=>{if(renderGen!==myGen)return;next();});act.appendChild(nx);
-}
-function next(){idx++;if(idx>=order.length){document.getElementById('quiz-view').style.display='none';document.getElementById('score-view').style.display='';const pct=Math.round(score/order.length*100);document.getElementById('final-score').textContent=score+' / '+order.length;document.getElementById('final-sub').textContent='正解率 '+pct+'% — '+(pct>=80?'素晴らしい！':pct>=60?'よくできました！':'もう一度挑戦しよう！');const ms=document.getElementById('missed-section');ms.innerHTML='';if(missed.length>0){ms.innerHTML='<h3>間違えた問題（'+missed.length+'問）</h3>';missed.forEach(q=>{const d=document.createElement('div');d.className='missed-item';d.innerHTML='<span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:12px">'+q.kana+'</span><span class="missed-ans">'+q.ans+'（'+q.read+'）</span>';ms.appendChild(d);});}const sa=document.getElementById('score-actions');sa.innerHTML='';if(missed.length>0){const rb=document.createElement('button');rb.className='br';rb.textContent='間違えた '+missed.length+' 問を再練習する';rb.onclick=()=>{order=missed.slice().sort(()=>Math.random()-.5);isRetry=true;idx=0;score=0;missed=[];document.getElementById('score-view').style.display='none';document.getElementById('quiz-view').style.display='';render();};sa.appendChild(rb);}const ag=document.createElement('button');ag.className='bp';ag.textContent='もう一度';ag.onclick=startQuiz;sa.appendChild(ag);const bk=document.createElement('button');bk.textContent='セット選択に戻る';bk.onclick=goStart;sa.appendChild(bk);}else{render();}}
 
-buildSetButtons();
+function showCands(i,cands){
+  S.candData[i]=cands;
+  const el=document.getElementById(`cds${i}`);if(!el)return;
+  el.innerHTML='';
+  cands.forEach(ch=>{const b=document.createElement('button');b.className='cd'+(S.selChars[i]===ch?' sel':'');b.textContent=ch;b.onclick=()=>{S.selChars[i]=ch;showCands(i,S.candData[i]||[]);};el.appendChild(b);});
+}
+
+// ── Actions ─────────────────────────────────────────
+window.clrCV=i=>{
+  const cv=document.getElementById(`cv${i}`);if(!cv)return;
+  cv.getContext('2d').clearRect(0,0,cv.width,cv.height);cv.classList.remove('on');
+  S.strokes[i]=[];S.selChars[i]=null;S.candData[i]=[];clearTimeout(S.timers[i]);
+  const el=document.getElementById(`cds${i}`);if(el)el.innerHTML='';
+};
+
+window.goHome=()=>{S.screen='home';render();};
+
+let _lastGrpIdx=0,_lastGrpType='kaki';
+window.stG=(gi,t)=>{
+  const gs=grps(t),qs=gs[gi];if(!qs||!qs.length)return;
+  _lastGrpIdx=gi;_lastGrpType=t;
+  S.qs=qs.slice().sort(()=>Math.random()-.5);
+  S.label=(t==='kaki'?'書き取り':'読み取り')+' '+(gi+1);
+  S.idx=0;S.score=0;S.missed=[];S.rev=false;S.isRetry=false;S.lastRes=null;S.screen='quiz';render();
+};
+
+window.stR=sec=>{
+  const ms=S.allMissed.filter(q=>q.sec===sec);if(!ms.length)return;
+  S.qs=ms.slice().sort(()=>Math.random()-.5);
+  S.label=(sec==='kaki'?'書き取り':'読み取り')+'（復習）';
+  S.idx=0;S.score=0;S.missed=[];S.rev=false;S.isRetry=true;S.lastRes=null;S.screen='quiz';render();
+};
+
+window.stG_again=()=>stG(_lastGrpIdx,_lastGrpType);
+
+window.doCheck=()=>{
+  if(S.rev)return;
+  const q=S.qs[S.idx];
+  const allSel=S.selChars.length>0&&S.selChars.every(c=>c!==null);
+  let ok=false,auto=false;
+  if(allSel){auto=true;ok=q.sec==='kaki'?S.selChars.every((c,i)=>c===q.ans[i]):S.selChars.join('')===q.read;}
+  else ok=true;
+  if(ok){S.score++;const i2=S.allMissed.findIndex(m=>m.ans===q.ans&&m.sec===q.sec);if(i2!==-1)S.allMissed.splice(i2,1);}
+  else{S.missed.push(q);if(!S.allMissed.find(m=>m.ans===q.ans&&m.sec===q.sec))S.allMissed.push(q);}
+  S.lastRes={ok,auto,skip:false};S.rev=true;render();
+};
+
+window.doSkip=()=>{
+  if(S.rev)return;
+  const q=S.qs[S.idx];
+  S.missed.push(q);if(!S.allMissed.find(m=>m.ans===q.ans&&m.sec===q.sec))S.allMissed.push(q);
+  S.lastRes={ok:false,auto:false,skip:true};S.rev=true;render();
+};
+
+window.doNext=()=>{
+  S.idx++;S.rev=false;S.lastRes=null;
+  S.screen=S.idx>=S.qs.length?'score':'quiz';
+  render();
+};
+
+window.doRetryMissed=()=>{
+  const ms=S.missed.slice();
+  S.qs=ms.sort(()=>Math.random()-.5);
+  S.label=S.label+'（再挑戦）';
+  S.idx=0;S.score=0;S.missed=[];S.rev=false;S.isRetry=true;S.lastRes=null;S.screen='quiz';render();
+};
+
+render();
 </script>
 </body>
 </html>
