@@ -31,7 +31,7 @@ canvas{border:1.5px dashed #bbb;border-radius:10px;background:#f9f8f5;cursor:cro
 canvas.active{border:1.5px solid #534AB7;}
 .clr-btn{font-size:11px;color:#999;background:none;border:none;cursor:pointer;padding:2px 8px;font-family:inherit;}
 .actions{display:flex;gap:8px;justify-content:center;margin-top:.5rem;flex-wrap:wrap;}
-button{font-family:inherit;font-size:14px;padding:9px 20px;border-radius:10px;cursor:pointer;border:1px solid #ccc;background:#fff;color:#1a1a1a;transition:all .15s;}
+button{font-family:inherit;font-size:14px;padding:9px 20px;border-radius:10px;cursor:pointer;border:1px solid #ccc;background:#fff;color:#1a1a1a;transition:all .15s;touch-action:manipulation;}
 button:hover{background:#f0eff9;}
 .bp{background:#534AB7!important;color:#fff!important;border-color:#534AB7!important;}
 .bp:hover{background:#3C3489!important;}
@@ -126,7 +126,7 @@ let section='kaki',selectedSets=new Set([1]),mode='rand';
 let order=[],idx=0,score=0,missed=[],allMissed=[];
 let canvases=[],drawing=[],lastPos=[];
 let strokesData=[],selectedChars=[],candidatesData=[],recognizeTimers=[];
-let revealed=false,isRetry=false,renderGen=0,canShowAns=false;
+let revealed=false,isRetry=false,renderGen=0;
 
 function switchSection(s){section=s;selectedSets=new Set([1]);document.getElementById('tab-kaki').className='tab-btn'+(s==='kaki'?' on':'');document.getElementById('tab-yomi').className='tab-btn'+(s==='yomi'?' on':'');buildSetButtons();}
 function buildSetButtons(){const Q=section==='kaki'?kakiQ:yomiQ;const maxN=Object.keys(Q).length;const lk=['①','②','③','④','⑤','⑥','⑦','⑧','⑨'];const ly=['①','②','③','④','⑤','⑥','⑦','⑧','⑨','⑩'];const labels=section==='kaki'?lk:ly;const prefix=section==='kaki'?'書き取り':'読み取り';const ss=document.getElementById('set-select');ss.innerHTML='';const ab=document.createElement('button');ab.className='set-btn'+(selectedSets.size===maxN?' on':'');ab.textContent='全セット';ab.onclick=()=>{selectedSets.size===maxN?selectedSets.clear():[...Array(maxN)].forEach((_,i)=>selectedSets.add(i+1));updateSetBtns(maxN);};ss.appendChild(ab);for(let i=1;i<=maxN;i++){const b=document.createElement('button');b.className='set-btn'+(selectedSets.has(i)?' on':'');b.textContent=prefix+labels[i-1];const n=i;b.onclick=()=>{selectedSets.has(n)?selectedSets.delete(n):selectedSets.add(n);updateSetBtns(maxN);};ss.appendChild(b);}updateRetryBanner();}
@@ -169,7 +169,6 @@ function render(){
   const sk=document.createElement('button');sk.textContent='わからない';sk.onclick=()=>showAns(true);act.appendChild(sk);
   document.getElementById('result-msg').textContent='';
   window.scrollTo(0,0);
-  canShowAns=false;setTimeout(()=>{canShowAns=true;},500);
 }
 function setupCanvas(cv,i){
   const ctx=cv.getContext('2d');ctx.lineWidth=3;ctx.lineCap='round';ctx.lineJoin='round';
@@ -206,7 +205,7 @@ function showCandidates(i,cands){
 }
 function selectCandidate(i,ch){selectedChars[i]=ch;showCandidates(i,candidatesData[i]||[]);}
 function showAns(skip){
-  if(revealed||!canShowAns)return;revealed=true;
+  if(revealed)return;revealed=true;
   recognizeTimers.forEach(t=>clearTimeout(t));
   const q=order[idx];
   const allSel=selectedChars.length>0&&selectedChars.every(c=>c!==null);
@@ -232,7 +231,7 @@ function showAns(skip){
   else if(auto){msg.textContent=correct?'正解！ '+q.ans+'（'+q.read+'）':'不正解 → 正解：'+q.ans+'（'+q.read+'）';msg.className='result-msg '+(correct?'ok':'ng');}
   else{msg.textContent='正解：'+q.ans+'（'+q.read+'）';msg.className='result-msg ok';}
   const act=document.getElementById('actions');act.innerHTML='';
-  const nx=document.createElement('button');nx.className='bp';nx.textContent=idx+1<order.length?'次の問題 →':'結果を見る';const myGen=renderGen;nx.addEventListener('click',()=>{if(renderGen!==myGen)return;nx.textContent='読み込み中...';setTimeout(()=>{if(renderGen!==myGen)return;try{next();}catch(e){nx.textContent=idx+1<order.length?'次の問題 →':'結果を見る';console.error(e);}},350);});act.appendChild(nx);
+  const nx=document.createElement('button');nx.className='bp';nx.textContent=idx+1<order.length?'次の問題 →':'結果を見る';const myGen=renderGen;nx.addEventListener('click',()=>{if(renderGen!==myGen)return;next();});act.appendChild(nx);
 }
 function next(){idx++;if(idx>=order.length){document.getElementById('quiz-view').style.display='none';document.getElementById('score-view').style.display='';const pct=Math.round(score/order.length*100);document.getElementById('final-score').textContent=score+' / '+order.length;document.getElementById('final-sub').textContent='正解率 '+pct+'% — '+(pct>=80?'素晴らしい！':pct>=60?'よくできました！':'もう一度挑戦しよう！');const ms=document.getElementById('missed-section');ms.innerHTML='';if(missed.length>0){ms.innerHTML='<h3>間違えた問題（'+missed.length+'問）</h3>';missed.forEach(q=>{const d=document.createElement('div');d.className='missed-item';d.innerHTML='<span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:12px">'+q.kana+'</span><span class="missed-ans">'+q.ans+'（'+q.read+'）</span>';ms.appendChild(d);});}const sa=document.getElementById('score-actions');sa.innerHTML='';if(missed.length>0){const rb=document.createElement('button');rb.className='br';rb.textContent='間違えた '+missed.length+' 問を再練習する';rb.onclick=()=>{order=missed.slice().sort(()=>Math.random()-.5);isRetry=true;idx=0;score=0;missed=[];document.getElementById('score-view').style.display='none';document.getElementById('quiz-view').style.display='';render();};sa.appendChild(rb);}const ag=document.createElement('button');ag.className='bp';ag.textContent='もう一度';ag.onclick=startQuiz;sa.appendChild(ag);const bk=document.createElement('button');bk.textContent='セット選択に戻る';bk.onclick=goStart;sa.appendChild(bk);}else{render();}}
 
