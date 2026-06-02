@@ -126,7 +126,7 @@ let section='kaki',selectedSets=new Set([1]),mode='rand';
 let order=[],idx=0,score=0,missed=[],allMissed=[];
 let canvases=[],drawing=[],lastPos=[];
 let strokesData=[],selectedChars=[],candidatesData=[],recognizeTimers=[];
-let revealed=false,isRetry=false;
+let revealed=false,isRetry=false,renderGen=0;
 
 function switchSection(s){section=s;selectedSets=new Set([1]);document.getElementById('tab-kaki').className='tab-btn'+(s==='kaki'?' on':'');document.getElementById('tab-yomi').className='tab-btn'+(s==='yomi'?' on':'');buildSetButtons();}
 function buildSetButtons(){const Q=section==='kaki'?kakiQ:yomiQ;const maxN=Object.keys(Q).length;const lk=['①','②','③','④','⑤','⑥','⑦','⑧','⑨'];const ly=['①','②','③','④','⑤','⑥','⑦','⑧','⑨','⑩'];const labels=section==='kaki'?lk:ly;const prefix=section==='kaki'?'書き取り':'読み取り';const ss=document.getElementById('set-select');ss.innerHTML='';const ab=document.createElement('button');ab.className='set-btn'+(selectedSets.size===maxN?' on':'');ab.textContent='全セット';ab.onclick=()=>{selectedSets.size===maxN?selectedSets.clear():[...Array(maxN)].forEach((_,i)=>selectedSets.add(i+1));updateSetBtns(maxN);};ss.appendChild(ab);for(let i=1;i<=maxN;i++){const b=document.createElement('button');b.className='set-btn'+(selectedSets.has(i)?' on':'');b.textContent=prefix+labels[i-1];const n=i;b.onclick=()=>{selectedSets.has(n)?selectedSets.delete(n):selectedSets.add(n);updateSetBtns(maxN);};ss.appendChild(b);}updateRetryBanner();}
@@ -137,6 +137,8 @@ function goStart(){document.getElementById('start-view').style.display='';docume
 function startRetry(){const rel=allMissed.filter(q=>q.sec===section);if(!rel.length)return;order=rel.slice().sort(()=>Math.random()-.5);isRetry=true;idx=0;score=0;missed=[];document.getElementById('start-view').style.display='none';document.getElementById('quiz-view').style.display='';document.getElementById('score-view').style.display='none';render();}
 function startQuiz(){if(!selectedSets.size){alert('セットを選んでください');return;}const Q=section==='kaki'?kakiQ:yomiQ;let pool=[];[...selectedSets].sort((a,b)=>a-b).forEach(n=>{pool=pool.concat((Q[n]||[]).map(q=>({...q,set:n,sec:section})));});const count=Math.min(parseInt(document.getElementById('count-slider').value),pool.length);order=mode==='rand'?pool.slice().sort(()=>Math.random()-.5).slice(0,count):pool.slice(0,count);isRetry=false;idx=0;score=0;missed=[];document.getElementById('start-view').style.display='none';document.getElementById('quiz-view').style.display='';document.getElementById('score-view').style.display='none';render();}
 function render(){
+  revealed=false;
+  renderGen++;
   recognizeTimers.forEach(t=>clearTimeout(t));
   recognizeTimers=[];strokesData=[];selectedChars=[];candidatesData=[];
   const q=order[idx];const total=order.length;
@@ -165,7 +167,8 @@ function render(){
   const act=document.getElementById('actions');act.innerHTML='';
   const ck=document.createElement('button');ck.className='bp';ck.textContent='答え合わせ';ck.onclick=()=>showAns(false);act.appendChild(ck);
   const sk=document.createElement('button');sk.textContent='わからない';sk.onclick=()=>showAns(true);act.appendChild(sk);
-  document.getElementById('result-msg').textContent='';revealed=false;
+  document.getElementById('result-msg').textContent='';
+  window.scrollTo(0,0);
 }
 function setupCanvas(cv,i){
   const ctx=cv.getContext('2d');ctx.lineWidth=3;ctx.lineCap='round';ctx.lineJoin='round';
@@ -173,7 +176,7 @@ function setupCanvas(cv,i){
   function pos(e){const r=cv.getBoundingClientRect(),s=e.touches?e.touches[0]:e;return{x:(s.clientX-r.left)*(cv.width/r.width),y:(s.clientY-r.top)*(cv.height/r.height)};}
   function startDraw(e){e.preventDefault();drawing[i]=true;t0=Date.now();cur={xs:[],ys:[],ts:[]};const p=pos(e);lastPos[i]=p;cur.xs.push(p.x);cur.ys.push(p.y);cur.ts.push(0);ctx.fillStyle='#1a1a1a';ctx.beginPath();ctx.arc(p.x,p.y,1.5,0,Math.PI*2);ctx.fill();}
   function moveDraw(e){if(!drawing[i]||!cur)return;e.preventDefault();const p=pos(e);ctx.strokeStyle='#1a1a1a';ctx.beginPath();ctx.moveTo(lastPos[i].x,lastPos[i].y);ctx.lineTo(p.x,p.y);ctx.stroke();lastPos[i]=p;cur.xs.push(p.x);cur.ys.push(p.y);cur.ts.push(Date.now()-t0);}
-  function endDraw(){if(!drawing[i])return;drawing[i]=false;if(cur&&cur.xs.length>1)strokesData[i].push(cur);cur=null;clearTimeout(recognizeTimers[i]);recognizeTimers[i]=setTimeout(()=>doRecognize(i,cv.width,cv.height),800);}
+  function endDraw(){if(!drawing[i])return;drawing[i]=false;if(cur&&cur.xs.length>1)strokesData[i].push(cur);cur=null;clearTimeout(recognizeTimers[i]);const g=renderGen;recognizeTimers[i]=setTimeout(()=>doRecognize(i,cv.width,cv.height,g),800);}
   cv.addEventListener('mousedown',startDraw);cv.addEventListener('mousemove',moveDraw);cv.addEventListener('mouseup',endDraw);cv.addEventListener('mouseleave',endDraw);
   cv.addEventListener('touchstart',startDraw,{passive:false});cv.addEventListener('touchmove',moveDraw,{passive:false});cv.addEventListener('touchend',endDraw);
 }
@@ -182,17 +185,19 @@ function clearCv(i){
   strokesData[i]=[];selectedChars[i]=null;candidatesData[i]=[];clearTimeout(recognizeTimers[i]);
   const el=document.getElementById('candidates-'+i);if(el)el.innerHTML='';
 }
-async function doRecognize(i,w,h){
+async function doRecognize(i,w,h,g){
+  if(g!==renderGen)return;
   if(!strokesData[i]||strokesData[i].length===0)return;
   const el=document.getElementById('candidates-'+i);if(!el)return;
   el.innerHTML='<span class="recognizing">認識中...</span>';
   try{
     const ink=strokesData[i].map(s=>[s.xs,s.ys,s.ts]);
     const res=await fetch('https://inputtools.google.com/request?ime=handwriting&app=translate&dbg=1&cs=1&oe=UTF-8',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({options:'enable_pre_space',requests:[{writing_guide:{writing_area_width:w,writing_area_height:h},ink,language:'ja'}]})});
+    if(g!==renderGen)return;
     const data=await res.json();
     const cands=(data[1]?.[0]?.[1]||[]).slice(0,8).filter(c=>c.trim());
-    showCandidates(i,cands);
-  }catch(e){if(el)el.innerHTML='';}
+    if(g===renderGen)showCandidates(i,cands);
+  }catch(e){if(g===renderGen&&el)el.innerHTML='';}
 }
 function showCandidates(i,cands){
   candidatesData[i]=cands;const el=document.getElementById('candidates-'+i);if(!el)return;el.innerHTML='';
@@ -226,7 +231,7 @@ function showAns(skip){
   else if(auto){msg.textContent=correct?'正解！ '+q.ans+'（'+q.read+'）':'不正解 → 正解：'+q.ans+'（'+q.read+'）';msg.className='result-msg '+(correct?'ok':'ng');}
   else{msg.textContent='正解：'+q.ans+'（'+q.read+'）';msg.className='result-msg ok';}
   const act=document.getElementById('actions');act.innerHTML='';
-  const nx=document.createElement('button');nx.className='bp';nx.textContent=idx+1<order.length?'次の問題 →':'結果を見る';nx.onclick=()=>next();act.appendChild(nx);
+  const nx=document.createElement('button');nx.className='bp';nx.textContent=idx+1<order.length?'次の問題 →':'結果を見る';nx.addEventListener('click',()=>{nx.disabled=true;next();});act.appendChild(nx);
 }
 function next(){idx++;if(idx>=order.length){document.getElementById('quiz-view').style.display='none';document.getElementById('score-view').style.display='';const pct=Math.round(score/order.length*100);document.getElementById('final-score').textContent=score+' / '+order.length;document.getElementById('final-sub').textContent='正解率 '+pct+'% — '+(pct>=80?'素晴らしい！':pct>=60?'よくできました！':'もう一度挑戦しよう！');const ms=document.getElementById('missed-section');ms.innerHTML='';if(missed.length>0){ms.innerHTML='<h3>間違えた問題（'+missed.length+'問）</h3>';missed.forEach(q=>{const d=document.createElement('div');d.className='missed-item';d.innerHTML='<span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:12px">'+q.kana+'</span><span class="missed-ans">'+q.ans+'（'+q.read+'）</span>';ms.appendChild(d);});}const sa=document.getElementById('score-actions');sa.innerHTML='';if(missed.length>0){const rb=document.createElement('button');rb.className='br';rb.textContent='間違えた '+missed.length+' 問を再練習する';rb.onclick=()=>{order=missed.slice().sort(()=>Math.random()-.5);isRetry=true;idx=0;score=0;missed=[];document.getElementById('score-view').style.display='none';document.getElementById('quiz-view').style.display='';render();};sa.appendChild(rb);}const ag=document.createElement('button');ag.className='bp';ag.textContent='もう一度';ag.onclick=startQuiz;sa.appendChild(ag);const bk=document.createElement('button');bk.textContent='セット選択に戻る';bk.onclick=goStart;sa.appendChild(bk);}else{render();}}
 
