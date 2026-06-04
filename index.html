@@ -309,13 +309,14 @@ window.stR=sec=>{
 
 window.stG_again=()=>stG(_lastGrpIdx,_lastGrpType);
 
+function toast(msg){let t=document.getElementById('_t');if(!t){t=document.createElement('div');t.id='_t';t.style.cssText='position:fixed;bottom:28px;left:50%;transform:translateX(-50%);background:#1E1B4B;color:#fff;padding:11px 22px;border-radius:99px;font-size:14px;font-weight:600;z-index:9999;pointer-events:none;transition:opacity .3s;white-space:nowrap;';document.body.appendChild(t);}t.textContent=msg;t.style.opacity='1';clearTimeout(t._t);t._t=setTimeout(()=>{t.style.opacity='0';},2200);}
 window.doCheck=()=>{
   if(S.rev)return;
   const q=S.qs[S.idx];
   const allSel=S.selChars.length>0&&S.selChars.every(c=>c!==null);
-  let ok=false,auto=false;
-  if(allSel){auto=true;ok=q.sec==='kaki'?S.selChars.every((c,i)=>c===q.ans[i]):S.selChars.join('')===q.read;}
-  else ok=true;
+  if(!allSel){toast('漢字を書いて候補を選択してください');return;}
+  const ok=q.sec==='kaki'?S.selChars.every((c,i)=>c===q.ans[i]):S.selChars.join('')===q.read;
+  const auto=true;
   if(ok){S.score++;const i2=S.allMissed.findIndex(m=>m.ans===q.ans&&m.sec===q.sec);if(i2!==-1)S.allMissed.splice(i2,1);}
   else{S.missed.push(q);if(!S.allMissed.find(m=>m.ans===q.ans&&m.sec===q.sec))S.allMissed.push(q);}
   saveMissed();S.lastRes={ok,auto,skip:false};S.rev=true;render();
